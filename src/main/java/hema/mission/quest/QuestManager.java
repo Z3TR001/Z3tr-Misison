@@ -23,7 +23,10 @@ public final class QuestManager {
     public static final List<Quest> QUESTS = List.of(
             new WoodQuest(),
             new KillQuest(),
-            new FlowerQuest()
+            new FlowerQuest(),
+            new NetherQuest(),
+            new EndQuest()
+
 
 
 
@@ -68,17 +71,28 @@ public final class QuestManager {
         QUESTS.forEach(Quest::registerEvents);
     }
 
-    public static void add(ServerPlayerEntity player, Quest quest) {
+    public static boolean isCurrent(ServerPlayerEntity player, Quest quest) {
         Progress p = player.getAttachedOrCreate(DATA);
-        if (p.quest() >= QUESTS.size() || QUESTS.get(p.quest()) != quest) return;
+        return p.quest() < QUESTS.size() && QUESTS.get(p.quest()) == quest;
+    }
 
-        int next = p.progress() + 1;
-        if (next >= quest.goal()) {
+    public static void add(ServerPlayerEntity player, Quest quest) {
+        if (!isCurrent(player, quest)) return;
+        setProgress(player, quest, player.getAttachedOrCreate(DATA).progress() + 1);
+    }
+
+    public static void setProgress(ServerPlayerEntity player, Quest quest, int amount) {
+        if (!isCurrent(player, quest)) return;
+
+        Progress p = player.getAttachedOrCreate(DATA);
+        if (amount <= p.progress()) return;
+
+        if (amount >= quest.goal()) {
             quest.reward(player);
             player.setAttached(DATA, new Progress(p.quest() + 1, 0));
             send(player, true);
         } else {
-            player.setAttached(DATA, new Progress(p.quest(), next));
+            player.setAttached(DATA, new Progress(p.quest(), amount));
             send(player, false);
         }
     }
