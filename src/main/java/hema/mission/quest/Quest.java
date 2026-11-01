@@ -6,7 +6,7 @@ public interface Quest {
     String title();
     String note();
     int goal();
-    String rewardText();
+    String rewardText( );
     void reward(ServerPlayerEntity player);
     void registerEvents();
 
