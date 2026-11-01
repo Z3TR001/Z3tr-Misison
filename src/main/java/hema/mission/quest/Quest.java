@@ -10,4 +10,8 @@ public interface Quest {
     void reward(ServerPlayerEntity   player);
     void registerEvents();
 
+
+
+
+
 }
