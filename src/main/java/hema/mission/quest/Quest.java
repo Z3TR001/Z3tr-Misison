@@ -9,4 +9,5 @@ public interface Quest {
     String rewardText();
     void reward(ServerPlayerEntity player);
     void registerEvents();
+
 }
